@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "service-status-indicator"
+version = "0.1.0"
+description = ""
+authors = ["Remi Zlatinis <remizlatinis@gmail.com>"]
+readme = "README.md"
+packages = [{include = "service_status_indicator"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^2.3.2"
+gunicorn = "^21.2.0"
+qrcode = "^7.4.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

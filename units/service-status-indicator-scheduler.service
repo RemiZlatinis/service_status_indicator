@@ -1,0 +1,15 @@
+[Unit]
+Description=Service Status Indicator Scheduler
+After=network.target
+
+[Service]
+WorkingDirectory=/etc/service-status-indicator/src/
+ExecStart=/usr/bin/bash scripts/start-scheduler.sh
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/service-status-indicator-scheduler.log
+StandardError=append:/var/log/service-status-indicator-scheduler.log
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

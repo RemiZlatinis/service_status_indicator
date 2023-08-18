@@ -1,0 +1,15 @@
+[
+  {
+    "id": "system-updates",
+    "label": "System Updates",
+    "script": "/etc/service-status-indicator/services/scripts/default/checks-system-updates.sh",
+    "interval": 6000,
+    "description": "Checks if the system is updated via the system's package manager. (Supported package managers: apt, pacman)"
+  },
+  {
+    "id": "system-services",
+    "label": "System Services",
+    "script": "/etc/service-status-indicator/services/scripts/default/checks-system-services.sh",
+    "interval": 30
+  }
+]

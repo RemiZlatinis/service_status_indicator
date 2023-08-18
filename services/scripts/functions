@@ -1,0 +1,30 @@
+check_systemctl_service() {
+    service_name="$1"
+    if systemctl is-active $service_name > /dev/null
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
+check_systemctl_service_all() {
+    if systemctl status --state=failed | grep -q "failed"
+    then
+        return 1
+    else
+        return 0
+    fi
+}
+
+check_docker_container() {
+    container_name="$1"
+    health_check="${2:-false}" # Also check container healthy status
+    if  ! $health_check || docker ps --filter "name=$container_name" --format "{{.Status}}" | grep -q "healthy" &&
+        docker ps --filter "name=$container_name" --format "{{.Status}}" | grep -q "Up"
+    then
+        return 0
+    else
+        return 1
+    fi    
+}

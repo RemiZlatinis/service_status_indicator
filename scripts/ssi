@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Check for root privileges 
+if [[ $EUID -ne 0 ]]; then
+    echo "❕ Service Status Indicator CLI must run with root privileges." 
+    exit 1
+fi
+
+cd /etc/service-status-indicator/src
+source .env/bin/activate
+python cli.py "$@"
