@@ -90,6 +90,9 @@ rm -rf /etc/service-status-indicator
 mv .ssi_temp /etc/service-status-indicator
 
 
+# Install Debian dependencies
+apt-get install python3-venv -y &> /dev/null
+
 
 # Create a Python virtual environment & install dependencies
 cd /etc/service-status-indicator/src
