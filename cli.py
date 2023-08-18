@@ -117,12 +117,15 @@ def disable(service_id):
 
 @cli.command()
 @click.option('-r', '--regenerate', is_flag=True, help='Regenerate token')
-def connect(regenerate):
+@click.option('-u', '--url', help='Set URL')
+def connect(regenerate, url):
     """Display connection info (QR code) and more."""
-
-    url = get_setting('url')
-    if not url:
-        url = f'http://{get_local_ip()}:{get_used_port()}/'
+    if url:
+        set_setting('url', url)
+    else:
+        url = get_setting('url')
+        if not url:
+            url = f'http://{get_local_ip()}:{get_used_port()}/'
 
     token = get_setting('token')
     if regenerate:
