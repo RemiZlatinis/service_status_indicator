@@ -19,6 +19,7 @@ mkdir .ssi_temp/src/scripts
 
 
 # Keep existing user stuff from previous installation 
+cp /etc/service-status-indicator/.config.json .ssi_temp/ &> /dev/null
 cp /etc/service-status-indicator/services/users.json .ssi_temp/services/users.json &> /dev/null
 cp -r /etc/service-status-indicator/services/scripts/users .ssi_temp/services/scripts/ &> /dev/null
 ssi &> /dev/null 2>&1 && enabled=$(ssi get-enabled-services-ids)
@@ -70,6 +71,7 @@ cp wsgi.py ../.ssi_temp/src
 cp -r scripts ../.ssi_temp/src
 cp -r services ../.ssi_temp/
 cp -r units ../.ssi_temp/
+cp .config.json ../.ssi_temp/
 cd ..
 rm -rf service_status_indicator-main
 echo -e "\r✅ Download complete.            "
