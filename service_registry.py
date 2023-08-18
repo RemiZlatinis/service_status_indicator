@@ -86,7 +86,6 @@ class ServiceRegistry:
                 _id = service['id']
                 DB.set_running(_id)
                 asyncio.create_task(keep_refreshing(_id))
-                DB.set_running(_id, False)
 
 
 async def keep_refreshing(_id):
@@ -119,3 +118,4 @@ async def keep_refreshing(_id):
                 'interval',
                 get_setting('default-refresh-interval'))
             await asyncio.sleep(interval)
+            DB.set_running(_id, False)
