@@ -1,4 +1,5 @@
 from subprocess import CalledProcessError
+from sqlite3 import OperationalError
 import click
 
 from helpers import (is_unit_active,
@@ -150,6 +151,18 @@ def connect(regenerate, url):
     Token: {token}
 """)
     print_qr_info({url, token})
+
+
+@cli.command()
+@click.argument('service_id')
+def refresh(service_id):
+    """Force refresh the service with the given ID."""
+    try:
+        DB.set_running(service_id, False)
+    except OperationalError:
+        print(f'🙆 Couldn\'t force refresh the "{service_id}".')
+    else:
+        print(f'✅ Service {service_id} is now refreshing.')
 
 
 @cli.command(hidden=True)
