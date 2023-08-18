@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# TODO: Modify this script so that it can be executed using the following command.
 # wget -qO- https://service-status-indicator.remiservices.uk/install.sh | sudo sh - 
 
 # Check for root privileges 
@@ -49,21 +48,31 @@ fi
 
 
 # Download necessary stuff
-cp api.py .ssi_temp/src
-cp cli.py .ssi_temp/src
-cp helpers.py .ssi_temp/src
-cp config.py .ssi_temp/src
-cp database.py .ssi_temp/src
-cp logger.py .ssi_temp/src
-cp models.py .ssi_temp/src
-cp scheduler.py .ssi_temp/src
-cp service_registry.py .ssi_temp/src
-cp wsgi.py .ssi_temp/src
+echo -ne " ⬇️ Downloading source files..."
+repo="https://github.com/RemiZlatinis/service_status_indicator"
+tar_file=".ssr_temp.tar.gz"
+curl -L -o "$tar_file" "$repo/archive/master.tar.gz" &> /dev/null
+tar -xzvf "$tar_file" &> /dev/null
+rm "$tar_file" &> /dev/null
+cd service_status_indicator-main
 
-cp -r scripts .ssi_temp/src
-cp -r services .ssi_temp/
-cp -r units .ssi_temp/
+cp api.py ../.ssi_temp/src
+cp cli.py ../.ssi_temp/src
+cp helpers.py ../.ssi_temp/src
+cp config.py ../.ssi_temp/src
+cp database.py ../.ssi_temp/src
+cp logger.py ../.ssi_temp/src
+cp models.py ../.ssi_temp/src
+cp scheduler.py ../.ssi_temp/src
+cp service_registry.py ../.ssi_temp/src
+cp wsgi.py ../.ssi_temp/src
 
+cp -r scripts ../.ssi_temp/src
+cp -r services ../.ssi_temp/
+cp -r units ../.ssi_temp/
+cd ..
+rm -rf service_status_indicator-main
+echo -e "\r✅ Download complete.            "
 
 
 # Configure port
@@ -73,7 +82,7 @@ if [[ -z "$port" ]]; then
 fi
 # Replace the port on server's staring script
 sed -i "s/0\.0\.0\.0:{PORT}/0.0.0.0:$port/g" .ssi_temp/src/scripts/start-server.sh
-
+echo -e "\033[1A\033[K✅ PORT successfully set to $port.            "
 
 
 # Copy source files
@@ -84,7 +93,7 @@ mv .ssi_temp /etc/service-status-indicator
 
 # Create a Python virtual environment & install dependencies
 cd /etc/service-status-indicator/src
-echo -ne " ⬇️ Installing dependencies"
+echo -ne " ⬇️ Installing dependencies..."
 python -m venv .env
 source .env/bin/activate
 pip install flask gunicorn qrcode &> /dev/null
@@ -94,7 +103,7 @@ cd /etc/service-status-indicator/
 
 
 # Move systemd services
-echo -ne "\r🔧 Configure system services"
+echo -ne "\r🔧 Configure system services..."
 mv units/* /etc/systemd/system/
 rm -r units
 systemctl daemon-reload
