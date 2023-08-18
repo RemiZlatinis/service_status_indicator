@@ -71,7 +71,6 @@ cp wsgi.py ../.ssi_temp/src
 cp -r scripts ../.ssi_temp/src
 cp -r services ../.ssi_temp/
 cp -r units ../.ssi_temp/
-cp .config.json ../.ssi_temp/
 cd ..
 rm -rf service_status_indicator-main
 echo -e "\r✅ Download complete.            "
