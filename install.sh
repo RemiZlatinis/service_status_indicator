@@ -48,7 +48,7 @@ fi
 
 
 
-# Download necessary stuff
+# Download source code
 echo -ne " ⬇️ Downloading source files..."
 repo="https://github.com/RemiZlatinis/service_status_indicator"
 tar_file=".ssr_temp.tar.gz"
@@ -57,21 +57,34 @@ tar -xzvf "$tar_file" &> /dev/null
 rm "$tar_file" &> /dev/null
 cd service_status_indicator-main
 
+# Copy necessary folders (into the temporarily structured folder)
+cp -r scripts ../.ssi_temp/src
+cp -r units ../.ssi_temp/
+
+# Copy necessary modules
 cp api.py ../.ssi_temp/src
 cp cli.py ../.ssi_temp/src
-cp helpers.py ../.ssi_temp/src
 cp config.py ../.ssi_temp/src
 cp database.py ../.ssi_temp/src
+cp helpers.py ../.ssi_temp/src
 cp logger.py ../.ssi_temp/src
 cp models.py ../.ssi_temp/src
 cp scheduler.py ../.ssi_temp/src
 cp service_registry.py ../.ssi_temp/src
 cp wsgi.py ../.ssi_temp/src
 
-cp -r scripts ../.ssi_temp/src
-cp -r services ../.ssi_temp/
-cp -r units ../.ssi_temp/
-cd ..
+# Copy services and scripts
+if [ ! -e ..ssi_temp/services/users.json ] && [ ! -e ..ssi_temp/services/scripts/users ]; then
+    # if there aren't user stuff override anything
+    cp -r services ../.ssi_temp/
+else
+    # Copy only built in services and scripts 
+    cp services/default.json ../.ssi_temp/
+    cp services/scripts/functions ../.ssi_temp/scripts/
+    cp -r services/scripts/default ../.ssi_temp/scripts/
+fi
+
+cd .. # .ssi_temp directory is one level up
 rm -rf service_status_indicator-main
 echo -e "\r✅ Download complete.            "
 
