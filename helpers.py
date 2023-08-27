@@ -41,7 +41,7 @@ def enable_unit(unit: Unit):
     if is_unit_active(unit) and is_unit_enabled(unit):
         return True
     try:
-        _run(f"systemctl enabled --now {UNITS[unit]}")
+        _run(f"systemctl enable --now {UNITS[unit]}")
     except subprocess.CalledProcessError:
         return False
     return True
