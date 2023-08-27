@@ -74,9 +74,9 @@ def format_time(seconds):
 
 
 def get_local_ip():
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        s.connect(("8.8.8.8", 80))
-        local_ip = s.getsockname()[0]
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as _socket:
+        _socket.connect(("8.8.8.8", 80))
+        local_ip = _socket.getsockname()[0]
         return local_ip
 
 
@@ -86,15 +86,15 @@ def get_used_port():
 
 
 def print_qr_info(data: str):
-    qr = qrcode.QRCode(
+    _qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
         box_size=10,
         border=4,
     )
-    qr.add_data(data)
-    qr.make(fit=True)
-    qr.print_ascii()
+    _qr.add_data(data)
+    _qr.make(fit=True)
+    _qr.print_ascii()
 
 
 def get_new_token():
