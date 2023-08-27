@@ -80,16 +80,21 @@ class ServiceRegistry:
 
     @staticmethod
     async def refresh_enabled_services_async():
+        """Invokes a refresh for each enabled service."""
         services = DB.get_enabled_services()
         for service in services:
             if not service['running']:
                 _id = service['id']
                 DB.set_running(_id)
-                asyncio.create_task(keep_refreshing(_id))
+                asyncio.create_task(refresh(_id))
 
 
-async def keep_refreshing(_id):
-    """Keep refreshing while is enabled"""
+async def refresh(_id):
+    """
+    Refresh the status of the service with given ID.
+
+    Runs the service's check script to get the latest status. 
+    """
     available_services = ServiceRegistry.get_available_services()
 
     for available in available_services:
@@ -97,25 +102,25 @@ async def keep_refreshing(_id):
             service = available
             break
     else:
-        service = None
+        error(f'Service {_id} is unavailable.')
+        return
 
-    while DB.get_service(_id)['enabled']:
-        try:
-            result = subprocess.run(['bash', service['script']],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE,
-                                    check=True)
-            status = result.stdout.decode('utf-8').strip().splitlines()[-1]
-            message = None
-            if "message=" in status:
-                status, message = status.split(' message=')
-            DB.set_status(_id, status, message)
-            debug(f'Service {_id} refreshed.')
-        except subprocess.CalledProcessError as err:
-            error(err.stderr.decode('utf-8').strip())
-        finally:
-            interval = service.get(
-                'interval',
-                get_setting('default-refresh-interval'))
-            await asyncio.sleep(interval)
-            DB.set_running(_id, False)
+    try:
+        result = subprocess.run(['bash', service['script']],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                check=True)
+        status = result.stdout.decode('utf-8').strip().splitlines()[-1]
+        message = None
+        if "message=" in status:
+            status, message = status.split(' message=')
+        DB.set_status(_id, status, message)
+        debug(f'Service {_id} refreshed.')
+    except subprocess.CalledProcessError as err:
+        error(err.stderr.decode('utf-8').strip())
+    finally:
+        interval = service.get(
+            'interval',
+            get_setting('default-refresh-interval'))
+        await asyncio.sleep(interval)
+        DB.set_running(_id, False)
