@@ -42,7 +42,8 @@ ssi &> /dev/null 2>&1 && enabled=$(ssi get-enabled-services-ids)
 systemctl disable --now service-status-indicator-api &> /dev/null
 systemctl disable --now service-status-indicator-scheduler &> /dev/null
 rm -rf /etc/service-status-indicator &> /dev/null
-rm /etc/systemd/system/service-status-indicator-* &> /dev/null
+rm /etc/systemd/system/service-status-indicator-api &> /dev/null
+rm /etc/systemd/system/service-status-indicator-scheduler &> /dev/null
 
 
 
