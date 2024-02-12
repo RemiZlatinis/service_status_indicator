@@ -10,7 +10,7 @@ fi
 
 
 
-# Create temporarily structure folder  
+# Create a temporary structured folder  
 rm -rf .ssi_temp &> /dev/null
 mkdir .ssi_temp
 mkdir .ssi_temp/src
@@ -18,7 +18,7 @@ mkdir .ssi_temp/src/scripts
 
 
 
-# Keep existing user stuff from previous installation 
+# Keep existing user stuff from the previous installation 
 cp /etc/service-status-indicator/.config.json .ssi_temp/ &> /dev/null
 cp /etc/service-status-indicator/services/users.json .ssi_temp/services/users.json &> /dev/null
 cp -r /etc/service-status-indicator/services/scripts/users .ssi_temp/services/scripts/ &> /dev/null
@@ -75,10 +75,10 @@ cp wsgi.py ../.ssi_temp/src
 
 # Copy services and scripts
 if [ ! -e ..ssi_temp/services/users.json ] && [ ! -e ..ssi_temp/services/scripts/users ]; then
-    # if there aren't user stuff override anything
+    # If there isn't user stuff override anything
     cp -r services ../.ssi_temp/
 else
-    # Copy only built in services and scripts 
+    # Copy only built-in services and scripts 
     cp services/default.json ../.ssi_temp/
     cp services/scripts/functions ../.ssi_temp/scripts/
     cp -r services/scripts/default ../.ssi_temp/scripts/
@@ -94,7 +94,7 @@ read -p "⚙️  Enter a PORT for the API [default: 8000]: " port
 if [[ -z "$port" ]]; then
   port="8000"
 fi
-# Replace the port on server's staring script
+# Replace the port on the server's starting script
 sed -i "s/0\.0\.0\.0:{PORT}/0.0.0.0:$port/g" .ssi_temp/src/scripts/start-server.sh
 echo -e "\033[1A\033[K✅ PORT successfully set to $port.            "
 
