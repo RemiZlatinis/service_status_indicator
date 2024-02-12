@@ -8,6 +8,18 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+# Check if systemd process is running
+if ! ps -p 1 | grep -q systemd; then
+    echo "❌ Only systemd is supported"
+    exit 1
+fi
+
+# Check for Python
+if ! command -v python &> /dev/null; then
+    echo "❌ Python is unavailable."
+    exit 1
+fi
+
 
 
 # Create a temporary structured folder  
@@ -31,20 +43,6 @@ systemctl disable --now service-status-indicator-api &> /dev/null
 systemctl disable --now service-status-indicator-scheduler &> /dev/null
 rm -rf /etc/service-status-indicator &> /dev/null
 rm /etc/systemd/system/service-status-indicator-* &> /dev/null
-
-
-
-# Check if systemd process is running
-if ! ps -p 1 | grep -q systemd; then
-    echo "❌ Only systemd is supported"
-    exit 1
-fi
-
-# Check for Python
-if ! command -v python &> /dev/null; then
-    echo "❌ Python is unavailable."
-    exit 1
-fi
 
 
 
