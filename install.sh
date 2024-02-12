@@ -25,15 +25,18 @@ fi
 # Create a temporary structured folder  
 rm -rf .ssi_temp &> /dev/null
 mkdir .ssi_temp
-mkdir .ssi_temp/src
-mkdir .ssi_temp/src/scripts
+cd .ssi_temp
+mkdir services
+mkdir services/scripts
+mkdir src
+mkdir src/scripts
 
 
 
 # Keep existing user stuff from the previous installation 
-cp /etc/service-status-indicator/.config.json .ssi_temp/ &> /dev/null
-cp /etc/service-status-indicator/services/users.json .ssi_temp/services/users.json &> /dev/null
-cp -r /etc/service-status-indicator/services/scripts/users .ssi_temp/services/scripts/ &> /dev/null
+cp /etc/service-status-indicator/.config.json . &> /dev/null
+cp /etc/service-status-indicator/services/users.json services/users.json &> /dev/null
+cp -r /etc/service-status-indicator/services/scripts/users services/scripts/ &> /dev/null
 ssi &> /dev/null 2>&1 && enabled=$(ssi get-enabled-services-ids)
 
 
@@ -57,31 +60,37 @@ rm "$tar_file" &> /dev/null
 cd service_status_indicator-main
 
 # Copy necessary folders (into the temporarily structured folder)
-cp -r scripts ../.ssi_temp/src
-cp -r units ../.ssi_temp/
+cp -r scripts ../src
+cp -r units ../
 
 # Copy necessary modules
-cp api.py ../.ssi_temp/src
-cp cli.py ../.ssi_temp/src
-cp config.py ../.ssi_temp/src
-cp database.py ../.ssi_temp/src
-cp helpers.py ../.ssi_temp/src
-cp logger.py ../.ssi_temp/src
-cp models.py ../.ssi_temp/src
-cp scheduler.py ../.ssi_temp/src
-cp service_registry.py ../.ssi_temp/src
-cp wsgi.py ../.ssi_temp/src
+cp api.py ../src
+cp cli.py ../src
+cp config.py ../src
+cp database.py ../src
+cp helpers.py ../src
+cp logger.py ../src
+cp models.py ../src
+cp scheduler.py ../src
+cp service_registry.py ../src
+cp wsgi.py ../src
+
+read -p "Press Enter to continue"
 
 # Copy services and scripts
-if [ ! -e ..ssi_temp/services/users.json ] && [ ! -e ..ssi_temp/services/scripts/users ]; then
+if [ ! -e ../services/users.json ] && [ ! -e ../services/scripts/users ]; then
     # If there isn't user stuff override anything
-    cp -r services ../.ssi_temp/
+    echo "override"
+    cp -r services ../
 else
-    # Copy only built-in services and scripts 
-    cp services/default.json ../.ssi_temp/
-    cp services/scripts/functions ../.ssi_temp/scripts/
-    cp -r services/scripts/default ../.ssi_temp/scripts/
+    # Copy only built-in services and scripts
+    echo "keep"
+    cp services/default.json ../services/
+    cp services/scripts/functions ../services/scripts/
+    cp -r services/scripts/default ../services/scripts/
 fi
+
+read -p "Press Enter to continue"
 
 cd .. # .ssi_temp directory is one level up
 rm -rf service_status_indicator-main
@@ -94,12 +103,13 @@ if [[ -z "$port" ]]; then
   port="8000"
 fi
 # Replace the port on the server's starting script
-sed -i "s/0\.0\.0\.0:{PORT}/0.0.0.0:$port/g" .ssi_temp/src/scripts/start-server.sh
+sed -i "s/0\.0\.0\.0:{PORT}/0.0.0.0:$port/g" src/scripts/start-server.sh
 echo -e "\033[1A\033[K✅ PORT successfully set to $port.            "
 
 
 # Copy source files
 rm -rf /etc/service-status-indicator
+cd ..
 mv .ssi_temp /etc/service-status-indicator
 
 
