@@ -75,7 +75,6 @@ cp scheduler.py ../src
 cp service_registry.py ../src
 cp wsgi.py ../src
 
-read -p "Press Enter to continue"
 
 # Copy services and scripts
 if [ ! -e ../services/users.json ] && [ ! -e ../services/scripts/users ]; then
@@ -90,7 +89,6 @@ else
     cp -r services/scripts/default ../services/scripts/
 fi
 
-read -p "Press Enter to continue"
 
 cd .. # .ssi_temp directory is one level up
 rm -rf service_status_indicator-main
