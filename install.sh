@@ -1,6 +1,13 @@
 #!/bin/bash
 
 # wget -qO- https://service-status-indicator.remiservices.uk/install.sh | sudo sh - 
+indicator_folder="/etc/service-status-indicator"
+if [ -d "$indicator_folder" ]; then
+  echo -ne "🔽 Updating..."
+else
+  echo -ne "🔄 Loading..."
+fi
+
 
 # Check for root privileges 
 if [[ $EUID -ne 0 ]]; then
@@ -53,7 +60,7 @@ rm /etc/systemd/system/service-status-indicator-scheduler &> /dev/null
 
 
 # Download source code
-echo -ne " ⬇️ Downloading source files..."
+echo -ne "\r🔽 Downloading source files..."
 repo="https://github.com/RemiZlatinis/service_status_indicator"
 tar_file=".ssr_temp.tar.gz"
 curl -L -o "$tar_file" "$repo/archive/master.tar.gz" &> /dev/null
@@ -81,11 +88,9 @@ cp wsgi.py ../src
 # Copy services and scripts
 if [ ! -e ../services/users.json ] && [ ! -e ../services/scripts/users ]; then
     # If there isn't user stuff override anything
-    echo "override"
     cp -r services ../
 else
     # Copy only built-in services and scripts
-    echo "keep"
     cp services/default.json ../services/
     cp services/scripts/functions ../services/scripts/
     cp -r services/scripts/default ../services/scripts/
@@ -129,7 +134,7 @@ apt-get install python3-venv -y &> /dev/null
 
 # Create a Python virtual environment & install dependencies
 cd /etc/service-status-indicator/src
-echo -ne " ⬇️ Installing dependencies..."
+echo -ne "🔽 Installing dependencies..."
 python -m venv .env
 source .env/bin/activate
 pip install flask gunicorn qrcode &> /dev/null
