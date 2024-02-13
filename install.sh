@@ -38,7 +38,9 @@ cp /etc/service-status-indicator/.config.json . &> /dev/null
 cp /etc/service-status-indicator/services/users.json services/users.json &> /dev/null
 cp -r /etc/service-status-indicator/services/scripts/users services/scripts/ &> /dev/null
 ssi &> /dev/null 2>&1 && enabled=$(ssi get-enabled-services-ids)
-
+if [ -e /etc/service-status-indicator/src/scripts/start-server.sh ]; then
+  previous_port=$(grep -oP '0\.0\.0\.0:\K\d+' /etc/service-status-indicator/src/scripts/start-server.sh)
+fi
 
 
 # Clean previous installation
@@ -95,20 +97,30 @@ rm -rf service_status_indicator-main
 echo -e "\r✅ Download complete.            "
 
 
+
+
 # Configure port
-read -p "⚙️  Enter a PORT for the API [default: 8000]: " port
-if [[ -z "$port" ]]; then
-  port="8000"
+default_port="8000"
+port="${previous_port:-$default_port}"
+
+read -p "⚙️  Enter a PORT for the API [default: $port]: " new_port
+
+if [[ -n "$new_port" ]]; then
+  port="$new_port"
 fi
-# Replace the port on the server's starting script
+
+# Replace the port in the server's starting script
 sed -i "s/0\.0\.0\.0:{PORT}/0.0.0.0:$port/g" src/scripts/start-server.sh
 echo -e "\033[1A\033[K✅ PORT successfully set to $port.            "
+
 
 
 # Copy source files
 rm -rf /etc/service-status-indicator
 cd ..
 mv .ssi_temp /etc/service-status-indicator
+
+
 
 
 # Install Debian dependencies
